@@ -1,0 +1,42 @@
+{
+    "name": "ai-bank-transfer-qr",
+    "version": "1.0.0",
+    "description": "AI-powered bank transfer QR code generator using Gemini AI and VietQR API",
+    "main": "dist/backend/server.js",
+    "scripts": {
+        "dev:backend": "tsx watch src/backend/server.ts",
+        "dev:frontend": "vite",
+        "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+        "build": "tsc && vite build",
+        "start": "node dist/backend/server.js",
+        "build:backend": "tsc --project tsconfig.backend.json",
+        "build:frontend": "vite build"
+    },
+    "dependencies": {
+        "express": "^4.18.2",
+        "cors": "^2.8.5",
+        "dotenv": "^16.3.1",
+        "axios": "^1.6.2",
+        "@google/generative-ai": "^0.2.1"
+    },
+    "devDependencies": {
+        "typescript": "^5.3.2",
+        "vite": "^5.0.8",
+        "@types/node": "^20.10.4",
+        "@types/express": "^4.17.21",
+        "@types/cors": "^2.8.17",
+        "tsx": "^4.6.2",
+        "concurrently": "^8.2.2"
+    },
+    "keywords": [
+        "qr-code",
+        "bank-transfer",
+        "vietnam",
+        "ai",
+        "gemini",
+        "vietqr"
+    ],
+    "author": "Your Name",
+    "license": "MIT"
+}
+

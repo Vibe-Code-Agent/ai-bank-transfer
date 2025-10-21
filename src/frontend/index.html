@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Bank Transfer QR Generator</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+</head>
+
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-qrcode"></i>
+                    <h1>AI Bank Transfer QR</h1>
+                </div>
+                <p class="subtitle">Generate QR codes for bank transfers using natural language</p>
+            </div>
+        </header>
+
+        <main class="main">
+            <div class="card">
+                <div class="card-header">
+                    <h2><i class="fas fa-magic"></i> Generate QR Code</h2>
+                    <p>Enter your transfer details in natural language</p>
+                </div>
+
+                <form id="qrForm" class="form">
+                    <div class="form-group">
+                        <label for="inputText" class="form-label">
+                            <i class="fas fa-comment-dots"></i>
+                            Transfer Description
+                        </label>
+                        <textarea id="inputText" name="inputText" class="form-input"
+                            placeholder="Example: vpbank NGUYEN TRUONG GIANG 250k tai so 1234567890" rows="3"
+                            required></textarea>
+                        <div class="form-hint">
+                            <i class="fas fa-lightbulb"></i>
+                            Examples: "techcombank NGUYEN VAN A 500k tai so 1234567890", "chuyen 1tr cho NGUYEN THI B
+                            tai bidv so 9876543210"
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="accountNumber" class="form-label">
+                            <i class="fas fa-credit-card"></i>
+                            Account Number (Optional)
+                        </label>
+                        <input type="text" id="accountNumber" name="accountNumber" class="form-input"
+                            placeholder="Enter recipient account number (or include in description above)" />
+                        <div class="form-hint">
+                            <i class="fas fa-info-circle"></i>
+                            You can include the account number in your description or enter it here separately
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary" id="generateBtn">
+                        <i class="fas fa-qrcode"></i>
+                        <span>Generate QR Code</span>
+                        <div class="btn-loading" id="btnLoading">
+                            <i class="fas fa-spinner fa-spin"></i>
+                        </div>
+                    </button>
+                </form>
+            </div>
+
+            <div class="result-section" id="resultSection" style="display: none;">
+                <div class="card">
+                    <div class="card-header">
+                        <h2><i class="fas fa-check-circle"></i> Generated QR Code</h2>
+                    </div>
+
+                    <div class="result-content">
+                        <div class="qr-container">
+                            <img id="qrImage" src="" alt="Generated QR Code" class="qr-image">
+                        </div>
+
+                        <div class="transfer-info" id="transferInfo">
+                            <!-- Transfer details will be populated here -->
+                        </div>
+                    </div>
+
+                    <div class="result-actions">
+                        <button class="btn btn-secondary" id="downloadBtn">
+                            <i class="fas fa-download"></i>
+                            Download QR
+                        </button>
+                        <button class="btn btn-outline" id="copyBtn">
+                            <i class="fas fa-copy"></i>
+                            Copy Link
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="error-section" id="errorSection" style="display: none;">
+                <div class="card error-card">
+                    <div class="error-content">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <h3>Error</h3>
+                        <p id="errorMessage"></p>
+                        <button class="btn btn-outline" id="retryBtn">
+                            <i class="fas fa-redo"></i>
+                            Try Again
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer class="footer">
+            <div class="footer-content">
+                <p>Powered by <strong>Gemini AI</strong> & <strong>VietQR API</strong></p>
+                <div class="footer-links">
+                    <a href="https://www.vietqr.io" target="_blank" rel="noopener">
+                        <i class="fas fa-external-link-alt"></i>
+                        VietQR Documentation
+                    </a>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script src="app.ts"></script>
+</body>
+
+</html>

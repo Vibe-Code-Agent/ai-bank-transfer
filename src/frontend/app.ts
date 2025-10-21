@@ -1,0 +1,242 @@
+interface GenerateQRRequest {
+    inputText: string;
+    accountNumber?: string;
+}
+
+interface GenerateQRResponse {
+    success: boolean;
+    data?: {
+        qrDataURL: string;
+        bankInfo: {
+            bankName: string;
+            bankCode: string;
+            accountName: string;
+            amount: string;
+            message: string;
+        };
+    };
+    error?: string;
+}
+
+class QRGenerator {
+    private form: HTMLFormElement;
+    private generateBtn: HTMLButtonElement;
+    private btnLoading: HTMLElement;
+    private resultSection: HTMLElement;
+    private errorSection: HTMLElement;
+    private qrImage: HTMLImageElement;
+    private transferInfo: HTMLElement;
+    private errorMessage: HTMLElement;
+    private downloadBtn: HTMLButtonElement;
+    private copyBtn: HTMLButtonElement;
+    private retryBtn: HTMLButtonElement;
+
+    constructor() {
+        this.initializeElements();
+        this.attachEventListeners();
+    }
+
+    private initializeElements(): void {
+        this.form = document.getElementById('qrForm') as HTMLFormElement;
+        this.generateBtn = document.getElementById('generateBtn') as HTMLButtonElement;
+        this.btnLoading = document.getElementById('btnLoading') as HTMLElement;
+        this.resultSection = document.getElementById('resultSection') as HTMLElement;
+        this.errorSection = document.getElementById('errorSection') as HTMLElement;
+        this.qrImage = document.getElementById('qrImage') as HTMLImageElement;
+        this.transferInfo = document.getElementById('transferInfo') as HTMLElement;
+        this.errorMessage = document.getElementById('errorMessage') as HTMLElement;
+        this.downloadBtn = document.getElementById('downloadBtn') as HTMLButtonElement;
+        this.copyBtn = document.getElementById('copyBtn') as HTMLButtonElement;
+        this.retryBtn = document.getElementById('retryBtn') as HTMLButtonElement;
+    }
+
+    private attachEventListeners(): void {
+        this.form.addEventListener('submit', (e) => this.handleSubmit(e));
+        this.downloadBtn.addEventListener('click', () => this.downloadQR());
+        this.copyBtn.addEventListener('click', () => this.copyQR());
+        this.retryBtn.addEventListener('click', () => this.retry());
+    }
+
+    private async handleSubmit(e: Event): Promise<void> {
+        e.preventDefault();
+
+        const formData = new FormData(this.form);
+        const inputText = formData.get('inputText') as string;
+        const accountNumber = formData.get('accountNumber') as string;
+
+        if (!inputText.trim()) {
+            this.showError('Please enter a transfer description');
+            return;
+        }
+
+        this.setLoading(true);
+        this.hideSections();
+
+        try {
+            const response = await this.generateQR({
+                inputText: inputText.trim(),
+                accountNumber: accountNumber.trim() || undefined
+            });
+
+            if (response.success && response.data) {
+                this.showResult(response.data);
+            } else {
+                this.showError(response.error || 'Failed to generate QR code');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            this.showError('Network error. Please check your connection and try again.');
+        } finally {
+            this.setLoading(false);
+        }
+    }
+
+    private async generateQR(request: GenerateQRRequest): Promise<GenerateQRResponse> {
+        const response = await fetch('/api/generate-qr', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(request)
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        return await response.json();
+    }
+
+    private showResult(data: GenerateQRResponse['data']): void {
+        if (!data) return;
+
+        // Set QR image
+        this.qrImage.src = data.qrDataURL;
+        this.qrImage.alt = 'Generated QR Code';
+
+        // Set transfer info
+        this.transferInfo.innerHTML = `
+      <div class="info-item">
+        <span class="info-label">
+          <i class="fas fa-university"></i>
+          Bank
+        </span>
+        <span class="info-value">${data.bankInfo.bankName}</span>
+      </div>
+      <div class="info-item">
+        <span class="info-label">
+          <i class="fas fa-user"></i>
+          Account Name
+        </span>
+        <span class="info-value">${data.bankInfo.accountName}</span>
+      </div>
+      <div class="info-item">
+        <span class="info-label">
+          <i class="fas fa-money-bill-wave"></i>
+          Amount
+        </span>
+        <span class="info-value">${this.formatAmount(data.bankInfo.amount)} VND</span>
+      </div>
+      ${data.bankInfo.message ? `
+      <div class="info-item">
+        <span class="info-label">
+          <i class="fas fa-comment"></i>
+          Message
+        </span>
+        <span class="info-value">${data.bankInfo.message}</span>
+      </div>
+      ` : ''}
+    `;
+
+        this.resultSection.style.display = 'block';
+        this.resultSection.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    private showError(message: string): void {
+        this.errorMessage.textContent = message;
+        this.errorSection.style.display = 'block';
+        this.errorSection.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    private hideSections(): void {
+        this.resultSection.style.display = 'none';
+        this.errorSection.style.display = 'none';
+    }
+
+    private setLoading(loading: boolean): void {
+        this.generateBtn.disabled = loading;
+        if (loading) {
+            this.generateBtn.classList.add('loading');
+        } else {
+            this.generateBtn.classList.remove('loading');
+        }
+    }
+
+    private formatAmount(amount: string): string {
+        const num = parseInt(amount);
+        if (isNaN(num)) return amount;
+
+        return new Intl.NumberFormat('vi-VN').format(num);
+    }
+
+    private downloadQR(): void {
+        if (!this.qrImage.src) return;
+
+        const link = document.createElement('a');
+        link.href = this.qrImage.src;
+        link.download = `qr-code-${Date.now()}.png`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+
+    private async copyQR(): Promise<void> {
+        if (!this.qrImage.src) return;
+
+        try {
+            await navigator.clipboard.writeText(this.qrImage.src);
+
+            // Show temporary success message
+            const originalText = this.copyBtn.innerHTML;
+            this.copyBtn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+            this.copyBtn.style.background = '#28a745';
+
+            setTimeout(() => {
+                this.copyBtn.innerHTML = originalText;
+                this.copyBtn.style.background = '';
+            }, 2000);
+        } catch (error) {
+            console.error('Failed to copy:', error);
+            alert('Failed to copy QR code link');
+        }
+    }
+
+    private retry(): void {
+        this.hideSections();
+        this.form.reset();
+        this.form.querySelector('input')?.focus();
+    }
+}
+
+// Initialize the application when DOM is loaded
+document.addEventListener('DOMContentLoaded', () => {
+    new QRGenerator();
+});
+
+// Add some example inputs for better UX
+document.addEventListener('DOMContentLoaded', () => {
+    const inputText = document.getElementById('inputText') as HTMLTextAreaElement;
+
+    // Add example on focus
+    inputText.addEventListener('focus', () => {
+        if (!inputText.value) {
+            inputText.placeholder = 'Examples:\n• vpbank NGUYEN TRUONG GIANG 250k\n• techcombank NGUYEN VAN A 500k\n• chuyen 1tr cho NGUYEN THI B tai bidv';
+        }
+    });
+
+    inputText.addEventListener('blur', () => {
+        if (!inputText.value) {
+            inputText.placeholder = 'Example: vpbank NGUYEN TRUONG GIANG 250k';
+        }
+    });
+});
