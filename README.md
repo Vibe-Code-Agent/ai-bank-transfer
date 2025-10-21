@@ -12,6 +12,7 @@ A modern web application that uses AI (Gemini) to parse natural language bank tr
 - 💾 **Download & Share**: Download QR codes or copy links for sharing
 - 🔍 **Smart Account Lookup**: Automatically looks up account holder names when not provided in input
 - 🎯 **Enhanced Bank Recognition**: AI uses live bank data from VietQR for accurate bank name matching
+- 📝 **Configurable Prompts**: AI prompts stored in YAML files for easy maintenance and updates
 
 ## Example Usage
 
@@ -30,6 +31,8 @@ The AI will extract:
 **Smart Fallback**: If the AI cannot parse the account holder name from the input, the system will automatically attempt to look it up using the VietQR account lookup API based on the bank and account number.
 
 **Enhanced Accuracy**: The AI receives the complete list of supported banks from VietQR API before parsing, ensuring accurate bank name recognition and matching.
+
+**Maintainable Prompts**: AI prompts are stored in YAML configuration files, making them easy to update and maintain without code changes.
 
 ## Prerequisites
 
@@ -152,7 +155,10 @@ ai-bank-transfer/
 │   ├── backend/
 │   │   ├── services/
 │   │   │   ├── vietqr.service.ts      # VietQR API integration
-│   │   │   └── gemini.service.ts      # Gemini AI integration
+│   │   │   ├── gemini.service.ts      # Gemini AI integration
+│   │   │   └── prompt.service.ts      # YAML prompt management
+│   │   ├── prompts/
+│   │   │   └── bank-transfer-parser.yaml # AI prompt templates
 │   │   ├── controllers/
 │   │   │   └── qr.controller.ts       # QR generation controller
 │   │   └── server.ts                   # Express server setup
