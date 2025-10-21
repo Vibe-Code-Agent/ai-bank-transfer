@@ -10,9 +10,17 @@ export interface ParsedBankInfo {
 
 export class GeminiService {
     private genAI: GoogleGenerativeAI;
+    private banksList: string = '';
 
     constructor(apiKey: string) {
         this.genAI = new GoogleGenerativeAI(apiKey);
+    }
+
+    setBanksList(banks: any[]): void {
+        // Create a formatted list of banks for the AI
+        this.banksList = banks.map(bank =>
+            `- ${bank.name} (${bank.shortName}, ${bank.code}, BIN: ${bank.bin})`
+        ).join('\n');
     }
 
     async parseBankTransferInput(inputText: string): Promise<ParsedBankInfo> {
@@ -23,8 +31,11 @@ You are a Vietnamese banking assistant. Parse the following natural language inp
 
 Input: "${inputText}"
 
+SUPPORTED BANKS LIST:
+${this.banksList}
+
 Extract the following information:
-1. Bank name (look for bank names like: vpbank, techcombank, bidv, vietinbank, acb, sacombank, etc.)
+1. Bank name (match against the supported banks list above)
 2. Account holder name (usually in uppercase, Vietnamese name)
 3. Amount (convert to VND format, e.g., "250k" = "250000", "1.5tr" = "1500000")
 4. Account number (if mentioned in the text, look for numbers that could be account numbers)
@@ -40,13 +51,13 @@ Return ONLY a JSON object in this exact format:
 }
 
 Rules:
-- Bank name should be lowercase and match common Vietnamese bank names
+- Bank name should match one of the supported banks from the list above (use the shortName or code)
 - Account name should be in uppercase
 - Amount should be a string with only numbers (no commas, spaces, or currency symbols)
 - Account number should be a string of digits (6-19 characters, typical for Vietnamese bank accounts)
 - If no message is provided, use empty string
 - If amount is not specified, use "0"
-- If bank is not found, use "unknown"
+- If bank is not found in the supported list, use "unknown"
 - If account name is not found or cannot be determined, use "UNKNOWN"
 - If account number is not found, use null
 

@@ -11,6 +11,7 @@ A modern web application that uses AI (Gemini) to parse natural language bank tr
 - 📊 **Real-time Processing**: Instant QR code generation with detailed transfer information
 - 💾 **Download & Share**: Download QR codes or copy links for sharing
 - 🔍 **Smart Account Lookup**: Automatically looks up account holder names when not provided in input
+- 🎯 **Enhanced Bank Recognition**: AI uses live bank data from VietQR for accurate bank name matching
 
 ## Example Usage
 
@@ -27,6 +28,8 @@ The AI will extract:
 - Transfer message (if provided)
 
 **Smart Fallback**: If the AI cannot parse the account holder name from the input, the system will automatically attempt to look it up using the VietQR account lookup API based on the bank and account number.
+
+**Enhanced Accuracy**: The AI receives the complete list of supported banks from VietQR API before parsing, ensuring accurate bank name recognition and matching.
 
 ## Prerequisites
 

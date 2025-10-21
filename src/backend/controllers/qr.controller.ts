@@ -43,7 +43,15 @@ export class QRController {
                 return;
             }
 
-            // Step 1: Parse input with Gemini AI
+            // Step 1: Get banks list and provide to Gemini AI
+            console.log('Fetching banks list from VietQR...');
+            const banks = await this.vietQRService.getBanks();
+            console.log(`Found ${banks.length} supported banks`);
+
+            // Provide banks list to Gemini for better accuracy
+            this.geminiService.setBanksList(banks);
+
+            // Step 2: Parse input with Gemini AI
             console.log('Parsing input with Gemini AI...');
             const parsedInfo = await this.geminiService.parseBankTransferInput(inputText);
             console.log('Parsed info:', parsedInfo);
@@ -59,7 +67,7 @@ export class QRController {
                 return;
             }
 
-            // Step 2: Find matching bank
+            // Step 3: Find matching bank
             console.log('Finding matching bank...');
             const bank = await this.vietQRService.findBank(parsedInfo.bank);
 
@@ -73,7 +81,7 @@ export class QRController {
 
             console.log('Found bank:', bank);
 
-            // Step 2.5: If account name is not parsed or is "UNKNOWN", try to lookup via VietQR API
+            // Step 4: If account name is not parsed or is "UNKNOWN", try to lookup via VietQR API
             let finalAccountName = parsedInfo.accountName;
 
             if (!parsedInfo.accountName || parsedInfo.accountName === 'UNKNOWN' || parsedInfo.accountName === 'unknown') {
@@ -93,7 +101,7 @@ export class QRController {
                 }
             }
 
-            // Step 3: Generate QR code
+            // Step 5: Generate QR code
             console.log('Generating QR code...');
             const qrRequest = {
                 accountNo: finalAccountNumber,
