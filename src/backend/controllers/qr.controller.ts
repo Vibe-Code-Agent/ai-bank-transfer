@@ -124,7 +124,7 @@ export class QRController {
                         bankCode: bank.code,
                         accountName: finalAccountName,
                         amount: parsedInfo.amount,
-                        message: parsedInfo.message
+                        message: parsedInfo.message || ''
                     }
                 }
             };
