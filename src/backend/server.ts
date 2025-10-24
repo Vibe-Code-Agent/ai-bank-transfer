@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import path from 'path';
 import { VietQRService } from './services/vietqr.service';
 import { GeminiService } from './services/gemini.service';
 import { QRController } from './controllers/qr.controller';
@@ -14,6 +15,9 @@ const PORT = process.env.PORT || 3001;
 // Middleware
 app.use(cors());
 app.use(express.json());
+
+// Serve static files from the frontend build
+app.use(express.static(path.join(__dirname, '../../dist/frontend')));
 
 // Initialize services
 const vietQRService = new VietQRService(
@@ -58,12 +62,18 @@ app.use((err: Error, req: express.Request, res: express.Response, next: express.
     });
 });
 
-// 404 handler
-app.use('*', (req, res) => {
-    res.status(404).json({
-        success: false,
-        error: 'Endpoint not found'
-    });
+// Serve the frontend for any non-API routes
+app.get('*', (req, res) => {
+    // If it's an API route that doesn't exist, return 404
+    if (req.path.startsWith('/api/')) {
+        res.status(404).json({
+            success: false,
+            error: 'API endpoint not found'
+        });
+    } else {
+        // Otherwise serve the frontend
+        res.sendFile(path.join(__dirname, '../../dist/frontend/index.html'));
+    }
 });
 
 // Start server
@@ -86,4 +96,3 @@ app.listen(PORT, () => {
         console.log('✅ All environment variables are configured');
     }
 });
-

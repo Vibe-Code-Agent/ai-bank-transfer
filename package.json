@@ -7,10 +7,15 @@
         "dev:backend": "tsx watch src/backend/server.ts",
         "dev:frontend": "vite",
         "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
-        "build": "tsc && vite build",
+        "build": "npm run build:backend && npm run build:frontend",
         "start": "node dist/backend/server.js",
         "build:backend": "tsc --project tsconfig.backend.json",
-        "build:frontend": "vite build"
+        "build:frontend": "vite build",
+        "postinstall": "npm run build"
+    },
+    "engines": {
+        "node": ">=18.0.0",
+        "npm": ">=8.0.0"
     },
     "dependencies": {
         "express": "^4.18.2",
