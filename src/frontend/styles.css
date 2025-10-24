@@ -347,6 +347,84 @@ body {
     color: white;
 }
 
+/* Mobile app section styles */
+.mobile-app-section {
+    margin-top: 25px;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.bank-app-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.bank-app-logo {
+    width: 60px;
+    height: 60px;
+    border-radius: 12px;
+    object-fit: cover;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.bank-app-details h4 {
+    color: #fff;
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+.bank-app-details p {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.9rem;
+    margin-bottom: 8px;
+}
+
+.autofill-badge {
+    display: inline-block;
+    background: rgba(40, 167, 69, 0.2);
+    color: #28a745;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    border: 1px solid rgba(40, 167, 69, 0.3);
+}
+
+.mobile-app-btn {
+    width: 100%;
+    background: linear-gradient(135deg, #28a745, #20c997);
+    border: none;
+    color: white;
+    padding: 15px 20px;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.mobile-app-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(40, 167, 69, 0.3);
+}
+
+.mobile-app-btn:active {
+    transform: translateY(0);
+}
+
+.mobile-app-btn i {
+    font-size: 1.1rem;
+}
+
 /* Responsive design */
 @media (max-width: 768px) {
     .container {
@@ -376,6 +454,25 @@ body {
 
     .btn {
         width: 100%;
+    }
+
+    .mobile-app-section {
+        margin-top: 20px;
+        padding: 15px;
+    }
+
+    .bank-app-logo {
+        width: 50px;
+        height: 50px;
+    }
+
+    .bank-app-details h4 {
+        font-size: 1.1rem;
+    }
+
+    .mobile-app-btn {
+        padding: 12px 16px;
+        font-size: 0.95rem;
     }
 }
 
@@ -426,4 +523,3 @@ body {
 .fa-spin {
     animation: spin 1s linear infinite;
 }
-

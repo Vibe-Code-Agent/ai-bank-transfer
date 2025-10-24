@@ -1,6 +1,8 @@
 import { Request, Response } from 'express';
 import { VietQRService } from '../services/vietqr.service';
 import { GeminiService } from '../services/gemini.service';
+import { MobileDetectionService } from '../services/mobile-detection.service';
+import { BankDeeplinkService } from '../services/bank-deeplink.service';
 
 export interface GenerateQRRequest {
     inputText: string;
@@ -18,6 +20,19 @@ export interface GenerateQRResponse {
             amount: string;
             message: string;
         };
+        mobileInfo?: {
+            isMobile: boolean;
+            platform: string;
+            bankApp?: {
+                appId: string;
+                appLogo: string;
+                appName: string;
+                bankName: string;
+                deeplink: string;
+                hasAutofill: boolean;
+            };
+            qrDeeplink?: string;
+        };
     };
     error?: string;
 }
@@ -25,10 +40,17 @@ export interface GenerateQRResponse {
 export class QRController {
     private vietQRService: VietQRService;
     private geminiService: GeminiService;
+    private bankDeeplinkService: BankDeeplinkService;
 
     constructor(vietQRService: VietQRService, geminiService: GeminiService) {
         this.vietQRService = vietQRService;
         this.geminiService = geminiService;
+        this.bankDeeplinkService = BankDeeplinkService.getInstance();
+        
+        // Initialize bank deeplink service
+        this.bankDeeplinkService.loadBankApps().catch(error => {
+            console.warn('Failed to load bank apps for deeplinks:', error);
+        });
     }
 
     async generateQR(req: Request, res: Response): Promise<void> {
@@ -134,7 +156,46 @@ export class QRController {
 
             const qrResponse = await this.vietQRService.generateQR(qrRequest);
 
-            // Step 4: Return success response
+            // Step 5: Detect mobile device and generate deeplink info
+            const userAgent = req.headers['user-agent'] || '';
+            const deviceInfo = MobileDetectionService.getDeviceInfo(userAgent);
+            
+            let mobileInfo = undefined;
+            if (deviceInfo.isMobile) {
+                console.log('Mobile device detected:', deviceInfo.platform);
+                
+                // Find bank app deeplink
+                const bankDeeplinkInfo = this.bankDeeplinkService.findBankDeeplink(bank.name);
+                
+                if (bankDeeplinkInfo) {
+                    console.log('Found bank app:', bankDeeplinkInfo.appName);
+                    
+                    // Generate QR deeplink (this might need adjustment based on actual VietQR deeplink format)
+                    const qrDeeplink = this.bankDeeplinkService.generateQRDeeplink(qrResponse.data.qrDataURL, bankDeeplinkInfo);
+                    
+                    mobileInfo = {
+                        isMobile: true,
+                        platform: deviceInfo.platform,
+                        bankApp: {
+                            appId: bankDeeplinkInfo.appId,
+                            appLogo: bankDeeplinkInfo.appLogo,
+                            appName: bankDeeplinkInfo.appName,
+                            bankName: bankDeeplinkInfo.bankName,
+                            deeplink: bankDeeplinkInfo.deeplink,
+                            hasAutofill: bankDeeplinkInfo.hasAutofill
+                        },
+                        qrDeeplink: qrDeeplink
+                    };
+                } else {
+                    console.log('No bank app found for:', bank.name);
+                    mobileInfo = {
+                        isMobile: true,
+                        platform: deviceInfo.platform
+                    };
+                }
+            }
+
+            // Step 6: Return success response
             const response: GenerateQRResponse = {
                 success: true,
                 data: {
@@ -145,7 +206,8 @@ export class QRController {
                         accountName: finalAccountName,
                         amount: parsedInfo.amount,
                         message: parsedInfo.message || ''
-                    }
+                    },
+                    mobileInfo: mobileInfo
                 }
             };
 

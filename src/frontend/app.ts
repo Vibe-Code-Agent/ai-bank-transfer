@@ -14,6 +14,19 @@ interface GenerateQRResponse {
             amount: string;
             message: string;
         };
+        mobileInfo?: {
+            isMobile: boolean;
+            platform: string;
+            bankApp?: {
+                appId: string;
+                appLogo: string;
+                appName: string;
+                bankName: string;
+                deeplink: string;
+                hasAutofill: boolean;
+            };
+            qrDeeplink?: string;
+        };
     };
     error?: string;
 }
@@ -144,6 +157,22 @@ class QRGenerator {
           Message
         </span>
         <span class="info-value">${data.bankInfo.message}</span>
+      </div>
+      ` : ''}
+      ${data.mobileInfo && data.mobileInfo.isMobile && data.mobileInfo.bankApp ? `
+      <div class="mobile-app-section">
+        <div class="bank-app-info">
+          <img src="${data.mobileInfo.bankApp.appLogo}" alt="${data.mobileInfo.bankApp.appName}" class="bank-app-logo">
+          <div class="bank-app-details">
+            <h4>${data.mobileInfo.bankApp.appName}</h4>
+            <p>${data.mobileInfo.bankApp.bankName}</p>
+            ${data.mobileInfo.bankApp.hasAutofill ? '<span class="autofill-badge">Auto-fill supported</span>' : ''}
+          </div>
+        </div>
+        <button class="btn btn-primary mobile-app-btn" onclick="window.open('${data.mobileInfo.qrDeeplink}', '_blank')">
+          <i class="fas fa-external-link-alt"></i>
+          Open in ${data.mobileInfo.bankApp.appName}
+        </button>
       </div>
       ` : ''}
     `;
