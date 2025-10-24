@@ -43,6 +43,26 @@ export class QRController {
                 return;
             }
 
+            // Check if API keys are configured
+            const missingVars = [];
+            if (!process.env.VIETQR_CLIENT_ID || process.env.VIETQR_CLIENT_ID === 'your_vietqr_client_id_here') {
+                missingVars.push('VIETQR_CLIENT_ID');
+            }
+            if (!process.env.VIETQR_API_KEY || process.env.VIETQR_API_KEY === 'your_vietqr_api_key_here') {
+                missingVars.push('VIETQR_API_KEY');
+            }
+            if (!process.env.GEMINI_API_KEY || process.env.GEMINI_API_KEY === 'your_gemini_api_key_here') {
+                missingVars.push('GEMINI_API_KEY');
+            }
+
+            if (missingVars.length > 0) {
+                res.status(500).json({
+                    success: false,
+                    error: `Missing or invalid API keys: ${missingVars.join(', ')}. Please configure your .env file with valid API keys.`
+                } as GenerateQRResponse);
+                return;
+            }
+
             // Step 1: Get banks list and provide to Gemini AI
             console.log('Fetching banks list from VietQR...');
             const banks = await this.vietQRService.getBanks();

@@ -33,7 +33,27 @@ export class PromptService {
         }
 
         try {
-            const promptPath = path.join(__dirname, '../prompts/bank-transfer-parser.yaml');
+            // Try multiple possible paths for the YAML file
+            const possiblePaths = [
+                path.join(__dirname, '../prompts/bank-transfer-parser.yaml'), // Development
+                path.join(__dirname, '../../src/backend/prompts/bank-transfer-parser.yaml'), // Production
+                path.join(process.cwd(), 'src/backend/prompts/bank-transfer-parser.yaml'), // Fallback
+                path.join(process.cwd(), 'dist/backend/prompts/bank-transfer-parser.yaml') // Build fallback
+            ];
+
+            let promptPath: string | null = null;
+            for (const testPath of possiblePaths) {
+                if (fs.existsSync(testPath)) {
+                    promptPath = testPath;
+                    break;
+                }
+            }
+
+            if (!promptPath) {
+                throw new Error(`Prompt template not found. Tried paths: ${possiblePaths.join(', ')}`);
+            }
+
+            console.log(`Loading prompt template from: ${promptPath}`);
             const fileContents = fs.readFileSync(promptPath, 'utf8');
             this.promptTemplate = yaml.load(fileContents) as PromptTemplate;
             return this.promptTemplate;
