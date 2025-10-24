@@ -41,6 +41,10 @@ app.get('/api/banks', (req, res) => {
     qrController.getBanks(req, res);
 });
 
+app.get('/api/bank-deeplinks', (req, res) => {
+    qrController.getBankDeeplinks(req, res);
+});
+
 // Health check endpoint
 app.get('/api/health', (req, res) => {
     res.json({
@@ -81,6 +85,7 @@ app.listen(PORT, () => {
     console.log(`🚀 Server running on port ${PORT}`);
     console.log(`📊 Health check: http://localhost:${PORT}/api/health`);
     console.log(`🏦 Banks API: http://localhost:${PORT}/api/banks`);
+    console.log(`🔗 Bank Deeplinks API: http://localhost:${PORT}/api/bank-deeplinks`);
     console.log(`🔗 QR Generation: http://localhost:${PORT}/api/generate-qr`);
 
     // Check environment variables

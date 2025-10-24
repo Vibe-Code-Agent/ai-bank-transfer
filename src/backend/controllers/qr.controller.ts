@@ -32,6 +32,15 @@ export interface GenerateQRResponse {
                 hasAutofill: boolean;
             };
             qrDeeplink?: string;
+            availableBankApps?: {
+                appId: string;
+                appLogo: string;
+                appName: string;
+                bankName: string;
+                deeplink: string;
+                hasAutofill: boolean;
+                monthlyInstall: number;
+            }[];
         };
     };
     error?: string;
@@ -164,35 +173,14 @@ export class QRController {
             if (deviceInfo.isMobile) {
                 console.log('Mobile device detected:', deviceInfo.platform);
                 
-                // Find bank app deeplink
-                const bankDeeplinkInfo = this.bankDeeplinkService.findBankDeeplink(bank.name);
+                // Get all available bank deeplinks for mobile users
+                const allDeeplinks = this.bankDeeplinkService.getAllAvailableDeeplinks();
                 
-                if (bankDeeplinkInfo) {
-                    console.log('Found bank app:', bankDeeplinkInfo.appName);
-                    
-                    // Generate QR deeplink (this might need adjustment based on actual VietQR deeplink format)
-                    const qrDeeplink = this.bankDeeplinkService.generateQRDeeplink(qrResponse.data.qrDataURL, bankDeeplinkInfo);
-                    
-                    mobileInfo = {
-                        isMobile: true,
-                        platform: deviceInfo.platform,
-                        bankApp: {
-                            appId: bankDeeplinkInfo.appId,
-                            appLogo: bankDeeplinkInfo.appLogo,
-                            appName: bankDeeplinkInfo.appName,
-                            bankName: bankDeeplinkInfo.bankName,
-                            deeplink: bankDeeplinkInfo.deeplink,
-                            hasAutofill: bankDeeplinkInfo.hasAutofill
-                        },
-                        qrDeeplink: qrDeeplink
-                    };
-                } else {
-                    console.log('No bank app found for:', bank.name);
-                    mobileInfo = {
-                        isMobile: true,
-                        platform: deviceInfo.platform
-                    };
-                }
+                mobileInfo = {
+                    isMobile: true,
+                    platform: deviceInfo.platform,
+                    availableBankApps: allDeeplinks
+                };
             }
 
             // Step 6: Return success response
@@ -233,6 +221,25 @@ export class QRController {
             res.status(500).json({
                 success: false,
                 error: error instanceof Error ? error.message : 'Failed to fetch banks'
+            });
+        }
+    }
+
+    async getBankDeeplinks(req: Request, res: Response): Promise<void> {
+        try {
+            // Return all available deeplinks without any filtering
+            const deeplinks = this.bankDeeplinkService.getAllAvailableDeeplinks();
+
+            res.json({
+                success: true,
+                data: deeplinks,
+                count: deeplinks.length
+            });
+        } catch (error) {
+            console.error('Error fetching bank deeplinks:', error);
+            res.status(500).json({
+                success: false,
+                error: error instanceof Error ? error.message : 'Failed to fetch bank deeplinks'
             });
         }
     }
