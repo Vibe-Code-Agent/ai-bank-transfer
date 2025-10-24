@@ -123,12 +123,9 @@ export class BankDeeplinkService {
     }
 
     generateQRDeeplink(qrDataURL: string, bankInfo: BankDeeplinkInfo): string {
-        // Create a deeplink that includes the QR code data
-        // This is a custom implementation - you might need to adjust based on VietQR's actual deeplink format
-        const baseUrl = bankInfo.deeplink;
-        const qrData = qrDataURL.split(',')[1]; // Remove data:image/png;base64, prefix
-        
-        return `${baseUrl}&qr=${encodeURIComponent(qrData)}`;
+        // Return the base deeplink without embedding QR data
+        // The bank app will handle the QR code scanning internally
+        return bankInfo.deeplink;
     }
 
     getAllBankApps(): BankApp[] {
