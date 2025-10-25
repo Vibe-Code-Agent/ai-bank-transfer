@@ -239,7 +239,14 @@ class QRGenerator {
         if (!this.qrImage.src) return;
 
         try {
-            await navigator.clipboard.writeText(this.qrImage.src);
+            // Create a more useful text to copy with transfer details
+            const currentUrl = window.location.href;
+            const transferInfo = this.transferInfo.textContent || '';
+
+            const copyText = `QR Code for Bank Transfer\nGenerated at: ${currentUrl}\n\nTransfer Details:\n${transferInfo}\n\nYou can scan this QR code with any QR scanner app to make the bank transfer.`;
+
+            // Try to copy the text to clipboard
+            await navigator.clipboard.writeText(copyText);
 
             // Show temporary success message
             const originalText = this.copyBtn.innerHTML;
@@ -252,7 +259,52 @@ class QRGenerator {
             }, 2000);
         } catch (error) {
             console.error('Failed to copy:', error);
-            alert('Failed to copy QR code link');
+
+            // Fallback: try to select the text in a temporary input
+            try {
+                const currentUrl = window.location.href;
+                const transferInfo = this.transferInfo.textContent || '';
+                const copyText = `QR Code for Bank Transfer\nGenerated at: ${currentUrl}\n\nTransfer Details:\n${transferInfo}\n\nYou can scan this QR code with any QR scanner app to make the bank transfer.`;
+
+                const tempInput = document.createElement('textarea');
+                tempInput.value = copyText;
+                tempInput.style.position = 'fixed';
+                tempInput.style.left = '-999999px';
+                tempInput.style.top = '-999999px';
+                tempInput.style.opacity = '0';
+                document.body.appendChild(tempInput);
+                tempInput.focus();
+                tempInput.select();
+
+                const successful = document.execCommand('copy');
+                document.body.removeChild(tempInput);
+
+                if (successful) {
+                    // Show success message
+                    const originalText = this.copyBtn.innerHTML;
+                    this.copyBtn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+                    this.copyBtn.style.background = '#28a745';
+
+                    setTimeout(() => {
+                        this.copyBtn.innerHTML = originalText;
+                        this.copyBtn.style.background = '';
+                    }, 2000);
+                } else {
+                    throw new Error('Copy command failed');
+                }
+            } catch (fallbackError) {
+                console.error('Fallback copy failed:', fallbackError);
+
+                // Show error message
+                const originalText = this.copyBtn.innerHTML;
+                this.copyBtn.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Copy Failed';
+                this.copyBtn.style.background = '#dc3545';
+
+                setTimeout(() => {
+                    this.copyBtn.innerHTML = originalText;
+                    this.copyBtn.style.background = '';
+                }, 3000);
+            }
         }
     }
 
