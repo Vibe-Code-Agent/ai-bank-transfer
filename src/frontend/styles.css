@@ -434,19 +434,19 @@ body {
 }
 
 .bank-app-card {
-    background: rgba(255, 255, 255, 0.08);
+    background: rgba(0, 0, 0, 0.4);
     border-radius: 15px;
     padding: 20px;
-    border: 1px solid rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.3);
     transition: all 0.3s ease;
     backdrop-filter: blur(10px);
 }
 
 .bank-app-card:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-    border-color: rgba(255, 255, 255, 0.25);
-    background: rgba(255, 255, 255, 0.12);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
+    border-color: rgba(255, 255, 255, 0.4);
+    background: rgba(0, 0, 0, 0.5);
 }
 
 .bank-app-card .bank-app-info {
@@ -474,27 +474,28 @@ body {
 
 .bank-app-btn {
     width: 100%;
-    background: rgba(255, 255, 255, 0.1);
-    border: 2px solid rgba(255, 255, 255, 0.4);
+    background: #007bff;
+    border: 2px solid #0056b3;
     color: #fff;
     padding: 12px 16px;
     border-radius: 10px;
     font-size: 0.9rem;
-    font-weight: 600;
+    font-weight: 700;
     cursor: pointer;
     transition: all 0.3s ease;
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 8px;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+    text-shadow: none;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .bank-app-btn:hover {
-    background: rgba(255, 255, 255, 0.2);
-    border-color: rgba(255, 255, 255, 0.6);
+    background: #0056b3;
+    border-color: #004085;
     transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
 }
 
 .bank-app-btn i {
@@ -565,17 +566,19 @@ body {
     }
 
     .bank-app-btn {
-        padding: 12px 16px;
-        font-size: 0.9rem;
+        padding: 14px 18px;
+        font-size: 1rem;
         font-weight: 700;
-        background: rgba(255, 255, 255, 0.15);
-        border-color: rgba(255, 255, 255, 0.5);
-        text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+        background: #007bff;
+        border-color: #0056b3;
+        color: #fff;
+        text-shadow: none;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
     }
 
     .bank-app-card {
-        background: rgba(255, 255, 255, 0.12);
-        border-color: rgba(255, 255, 255, 0.2);
+        background: rgba(0, 0, 0, 0.5);
+        border-color: rgba(255, 255, 255, 0.4);
     }
 
     .bank-app-card .bank-app-details h4 {
@@ -596,31 +599,34 @@ body {
     }
 
     .bank-app-card {
-        background: rgba(255, 255, 255, 0.15);
-        border-color: rgba(255, 255, 255, 0.25);
+        background: rgba(0, 0, 0, 0.6);
+        border-color: rgba(255, 255, 255, 0.4);
         padding: 18px;
     }
 
     .bank-app-card .bank-app-details h4 {
-        font-size: 1.1rem;
+        font-size: 1.2rem;
         font-weight: 700;
         color: #fff;
-        text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+        text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
     }
 
     .bank-app-card .bank-app-details p {
-        font-size: 0.9rem;
+        font-size: 1rem;
         font-weight: 600;
-        color: rgba(255, 255, 255, 0.95);
+        color: #fff;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
     }
 
     .bank-app-btn {
-        padding: 14px 18px;
-        font-size: 0.95rem;
+        padding: 16px 20px;
+        font-size: 1.1rem;
         font-weight: 700;
-        background: rgba(255, 255, 255, 0.2);
-        border-color: rgba(255, 255, 255, 0.6);
-        text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+        background: #007bff;
+        border-color: #0056b3;
+        color: #fff;
+        text-shadow: none;
+        box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
     }
 
     .logo h1 {
