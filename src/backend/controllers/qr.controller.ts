@@ -55,7 +55,7 @@ export class QRController {
         this.vietQRService = vietQRService;
         this.geminiService = geminiService;
         this.bankDeeplinkService = BankDeeplinkService.getInstance();
-        
+
         // Initialize bank deeplink service
         this.bankDeeplinkService.loadBankApps().catch(error => {
             console.warn('Failed to load bank apps for deeplinks:', error);
@@ -168,14 +168,15 @@ export class QRController {
             // Step 5: Detect mobile device and generate deeplink info
             const userAgent = req.headers['user-agent'] || '';
             const deviceInfo = MobileDetectionService.getDeviceInfo(userAgent);
-            
+
             let mobileInfo = undefined;
             if (deviceInfo.isMobile) {
                 console.log('Mobile device detected:', deviceInfo.platform);
-                
+
                 // Get all available bank deeplinks for mobile users
                 const allDeeplinks = this.bankDeeplinkService.getAllAvailableDeeplinks();
-                
+                console.log(`Found ${allDeeplinks.length} available bank deeplinks`);
+
                 mobileInfo = {
                     isMobile: true,
                     platform: deviceInfo.platform,

@@ -26,6 +26,15 @@ interface GenerateQRResponse {
                 hasAutofill: boolean;
             };
             qrDeeplink?: string;
+            availableBankApps?: {
+                appId: string;
+                appLogo: string;
+                appName: string;
+                bankName: string;
+                deeplink: string;
+                hasAutofill: boolean;
+                monthlyInstall: number;
+            }[];
         };
     };
     error?: string;
@@ -159,20 +168,27 @@ class QRGenerator {
         <span class="info-value">${data.bankInfo.message}</span>
       </div>
       ` : ''}
-      ${data.mobileInfo && data.mobileInfo.isMobile && data.mobileInfo.bankApp ? `
+      ${data.mobileInfo && data.mobileInfo.isMobile && data.mobileInfo.availableBankApps ? `
       <div class="mobile-app-section">
-        <div class="bank-app-info">
-          <img src="${data.mobileInfo.bankApp.appLogo}" alt="${data.mobileInfo.bankApp.appName}" class="bank-app-logo">
-          <div class="bank-app-details">
-            <h4>${data.mobileInfo.bankApp.appName}</h4>
-            <p>${data.mobileInfo.bankApp.bankName}</p>
-            ${data.mobileInfo.bankApp.hasAutofill ? '<span class="autofill-badge">Auto-fill supported</span>' : ''}
-          </div>
+        <h3><i class="fas fa-mobile-alt"></i> Available Bank Apps</h3>
+        <div class="bank-apps-grid">
+          ${data.mobileInfo.availableBankApps.map(app => `
+            <div class="bank-app-card">
+              <div class="bank-app-info">
+                <img src="${app.appLogo}" alt="${app.appName}" class="bank-app-logo">
+                <div class="bank-app-details">
+                  <h4>${app.appName}</h4>
+                  <p>${app.bankName}</p>
+                  ${app.hasAutofill ? '<span class="autofill-badge">Auto-fill supported</span>' : ''}
+                </div>
+              </div>
+              <button class="btn btn-outline bank-app-btn" onclick="window.open('${app.deeplink}', '_blank')">
+                <i class="fas fa-external-link-alt"></i>
+                Open App
+              </button>
+            </div>
+          `).join('')}
         </div>
-        <button class="btn btn-primary mobile-app-btn" onclick="window.open('${data.mobileInfo.qrDeeplink}', '_blank')">
-          <i class="fas fa-external-link-alt"></i>
-          Open in ${data.mobileInfo.bankApp.appName}
-        </button>
       </div>
       ` : ''}
     `;
