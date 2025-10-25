@@ -243,7 +243,19 @@ class QRGenerator {
             const currentUrl = window.location.href;
             const transferInfo = this.transferInfo.textContent || '';
 
-            const copyText = `QR Code for Bank Transfer\nGenerated at: ${currentUrl}\n\nTransfer Details:\n${transferInfo}\n\nYou can scan this QR code with any QR scanner app to make the bank transfer.`;
+            // Format the transfer info with proper line breaks
+            const formattedTransferInfo = transferInfo
+                .replace(/\s+/g, ' ') // Replace multiple spaces with single space
+                .split(/(?=Bank|Account Name|Amount|Message)/) // Split at each field
+                .filter(line => line.trim()) // Remove empty lines
+                .map(line => line.trim()) // Trim whitespace
+                .join('\n'); // Join with newlines
+
+            const copyText = `QR Code for Bank Transfer\n` +
+                `Generated at: ${currentUrl}\n\n` +
+                `Transfer Details:\n` +
+                `${formattedTransferInfo}\n\n` +
+                `You can scan this QR code with any QR scanner app to make the bank transfer.`;
 
             // Try to copy the text to clipboard
             await navigator.clipboard.writeText(copyText);
@@ -264,7 +276,20 @@ class QRGenerator {
             try {
                 const currentUrl = window.location.href;
                 const transferInfo = this.transferInfo.textContent || '';
-                const copyText = `QR Code for Bank Transfer\nGenerated at: ${currentUrl}\n\nTransfer Details:\n${transferInfo}\n\nYou can scan this QR code with any QR scanner app to make the bank transfer.`;
+
+                // Format the transfer info with proper line breaks
+                const formattedTransferInfo = transferInfo
+                    .replace(/\s+/g, ' ') // Replace multiple spaces with single space
+                    .split(/(?=Bank|Account Name|Amount|Message)/) // Split at each field
+                    .filter(line => line.trim()) // Remove empty lines
+                    .map(line => line.trim()) // Trim whitespace
+                    .join('\n'); // Join with newlines
+
+                const copyText = `QR Code for Bank Transfer\n` +
+                    `Generated at: ${currentUrl}\n\n` +
+                    `Transfer Details:\n` +
+                    `${formattedTransferInfo}\n\n` +
+                    `You can scan this QR code with any QR scanner app to make the bank transfer.`;
 
                 const tempInput = document.createElement('textarea');
                 tempInput.value = copyText;
